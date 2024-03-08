@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- structure of the weather card -->
+    <div class="card">
+        <!-- search bar area -->
+        <div class="search">
+            <input type="text" placeholder="enter city name" spellcheck="false">
+            <button><img src="images/search.png"></button>
+        </div>
+        <!-- starting weather details (image,temp,city,humidity,wind) -->
+        <div class="weather">
+            <!-- image, temp, city -->
+            <img src="images/rain.png" class="weather-icon">
+            <h1 class="temp">20°C</h1>
+            <h2 class="city">New York</h2>
+            
+            <!-- part of humidity and wind -->
+            <div class="details">
+                <div class="col">
+                    <img src="images/humidity.png" >
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="images/wind.png" >
+                    <div>
+                        <p class="wind">15 km/h</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- using javascript to call the API -->
+<script>
+    const apiKey = "9c29597df763a02b378e9ef84ecd598d";
+    const apiURL = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+    //get the city name as input from search box
+    //identify variables based on the HTML classes to use them in updating city and weather image
+    const searchBox = document.querySelector(".search input");
+    const searchBtn = document.querySelector(".search button");
+    const weatherIcon = document.querySelector(".weather-icon");
+
+
+    //function to call the API
+    async function checkWeather(city){
+        const response = await fetch(apiURL + city + `&appid=${apiKey}`);
+        //store all the data from the API
+        var data = await response.json();
+
+       // No need any more -> console.log(data);
+       
+       //updating the data into HTML elements
+       document.querySelector(".city").innerHTML = data.name;
+       document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+       document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+       document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+        
+        //updating Weather images in the Weather Card
+        if (data.weather[0].main == "Clouds"){
+            weatherIcon.src = "images/clouds.png";
+        }else if (data.weather[0].main == "Clear"){
+            weatherIcon.src = "images/clear.png";
+        }else if (data.weather[0].main == "Rain"){
+            weatherIcon.src = "images/rain.png";
+        }else if (data.weather[0].main == "Drizzle"){
+            weatherIcon.src = "images/drizzle.png";
+        }else if (data.weather[0].main == "Mist"){
+            weatherIcon.src = "images/mist.png";
+        }
+
+        //update weather display to -> "block" to be displayed
+        document.querySelector(".weather").style.display = "block";
+
+    }
+   //getting the user input after button click -> then send it to the method as variable "city" 
+    searchBtn.addEventListener("click", ()=>{
+        checkWeather(searchBox.value);
+    })
+    
+</script>
+</body>
+</html>
